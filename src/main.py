@@ -17,7 +17,7 @@ from src.github_client import (
     get_release_version,
     parse_changelog,
 )
-from src.notifier import format_dry_run, notify
+from src.notifier import format_dry_run, notify, notify_no_updates
 from src.state import get_last_version, save_last_version
 
 logging.basicConfig(
@@ -59,6 +59,8 @@ def main() -> None:
 
     if not new_releases:
         logger.info("No new releases found since last check")
+        if not args.dry_run and not args.version:
+            notify_no_updates()
         return
 
     logger.info("Processing %d new release(s)", len(new_releases))
