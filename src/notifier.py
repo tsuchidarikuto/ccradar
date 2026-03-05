@@ -20,12 +20,10 @@ def _build_section_blocks(header: str, items: list[ClassifiedItem]) -> list[dict
     current_len = len(header) + 1
 
     for item in items:
-        line = f"  - {item.summary}"
+        line = "  - " + item.summary
         line_len = len(line) + 1
         if current_len + line_len > _SLACK_SECTION_MAX_LENGTH and current_lines:
-            text = f"{header}
-" + "
-".join(current_lines)
+            text = header + "\n" + "\n".join(current_lines)
             blocks.append({"type": "section", "text": {"type": "mrkdwn", "text": text}})
             current_lines = []
             current_len = len(header) + 1
@@ -33,9 +31,7 @@ def _build_section_blocks(header: str, items: list[ClassifiedItem]) -> list[dict
         current_len += line_len
 
     if current_lines:
-        text = f"{header}
-" + "
-".join(current_lines)
+        text = header + "\n" + "\n".join(current_lines)
         blocks.append({"type": "section", "text": {"type": "mrkdwn", "text": text}})
 
     return blocks
@@ -52,7 +48,7 @@ def _build_blocks(version: str, items: list[ClassifiedItem]) -> list[dict]:
             "type": "header",
             "text": {
                 "type": "plain_text",
-                "text": f"Claude Code {version} - Release Radar",
+                "text": "Claude Code " + version + " - Release Radar",
             },
         },
     ]
@@ -74,7 +70,7 @@ def _build_blocks(version: str, items: list[ClassifiedItem]) -> list[dict]:
         "elements": [
             {
                 "type": "mrkdwn",
-                "text": f"<https://github.com/anthropics/claude-code/releases/tag/v{version}|View full release notes>",
+                "text": "<https://github.com/anthropics/claude-code/releases/tag/v" + version + "|View full release notes>",
             }
         ],
     })
@@ -89,13 +85,13 @@ def notify(version: str, items: list[ClassifiedItem]) -> None:
 
     if not items:
         payload = {
-            "text": f"Claude Code {version} がリリースされました（Bugfix のみ） <https://github.com/anthropics/claude-code/releases/tag/v{version}|Release Notes>",
+            "text": "Claude Code " + version + " がリリースされました（Bugfix のみ） <https://github.com/anthropics/claude-code/releases/tag/v" + version + "|Release Notes>",
         }
     else:
         blocks = _build_blocks(version, items)
         payload = {
             "blocks": blocks,
-            "text": f"Claude Code {version} - new features and improvements detected",
+            "text": "Claude Code " + version + " - new features and improvements detected",
         }
 
     response = requests.post(webhook_url, json=payload, timeout=30)
@@ -120,38 +116,33 @@ def notify_no_updates() -> None:
 
 def format_dry_run(version: str, items: list[ClassifiedItem]) -> str:
     if not items:
-        return f"[{version}] Release found, but no new features, improvements, or breaking changes (bugfix only)."
+        return "[" + version + "] Release found, but no new features, improvements, or breaking changes (bugfix only)."
 
     features = [item for item in items if item.category == Category.FEATURE]
     improvements = [item for item in items if item.category == Category.IMPROVEMENT]
     breakings = [item for item in items if item.category == Category.BREAKING]
     changes = [item for item in items if item.category == Category.CHANGE]
 
-    lines = [f"=== Claude Code {version} ==="]
+    lines = ["=== Claude Code " + version + " ==="]
 
     if breakings:
-        lines.append("
-[Breaking Changes]")
+        lines.append("\n[Breaking Changes]")
         for b in breakings:
-            lines.append(f"  - {b.summary}")
+            lines.append("  - " + b.summary)
 
     if features:
-        lines.append("
-[New Features]")
+        lines.append("\n[New Features]")
         for f in features:
-            lines.append(f"  - {f.summary}")
+            lines.append("  - " + f.summary)
 
     if improvements:
-        lines.append("
-[Improvements]")
+        lines.append("\n[Improvements]")
         for i in improvements:
-            lines.append(f"  - {i.summary}")
+            lines.append("  - " + i.summary)
 
     if changes:
-        lines.append("
-[Changes]")
+        lines.append("\n[Changes]")
         for c in changes:
-            lines.append(f"  - {c.summary}")
+            lines.append("  - " + c.summary)
 
-    return "
-".join(lines)
+    return "\n".join(lines)
