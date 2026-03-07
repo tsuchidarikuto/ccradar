@@ -7,7 +7,7 @@ from dataclasses import dataclass
 
 from google import genai
 from google.genai import types
-from google.genai.errors import ClientError
+from google.genai.errors import ClientError, ServerError
 
 from src.categories import NOTIFY_CATEGORIES, Category
 from src.prompts import SYSTEM_PROMPT
@@ -15,6 +15,8 @@ from src.prompts import SYSTEM_PROMPT
 logger = logging.getLogger(__name__)
 
 _client: genai.Client | None = None
+
+_FALLBACK_MODEL = "gemini-2.5-flash"
 
 
 def _get_client() -> genai.Client:
@@ -37,6 +39,18 @@ class ClassifiedItem:
     original: str = ""  # 元の箇条書きテキスト
 
 
+def _call_model(client: genai.Client, model_name: str, body: str) -> str:
+    """指定モデルで generate_content を呼び出し、レスポンステキストを返す。"""
+    response = client.models.generate_content(
+        model=model_name,
+        contents=body,
+        config=types.GenerateContentConfig(
+            system_instruction=SYSTEM_PROMPT,
+        ),
+    )
+    return response.text.strip()
+
+
 def classify_release(body: str) -> list[ClassifiedItem]:
     """Gemini API を使ってリリース内容を分類・要約する。
 
@@ -56,13 +70,17 @@ def classify_release(body: str) -> list[ClassifiedItem]:
 
     client = _get_client()
     try:
-        response = client.models.generate_content(
-            model=model_name,
-            contents=body,
-            config=types.GenerateContentConfig(
-                system_instruction=SYSTEM_PROMPT,
-            ),
-        )
+        raw_text = _call_model(client, model_name, body)
+    except ServerError as e:
+        if e.code == 503 and model_name != _FALLBACK_MODEL:
+            logger.warning(
+                "Gemini model %s returned 503 (high demand). Falling back to %s.",
+                model_name,
+                _FALLBACK_MODEL,
+            )
+            raw_text = _call_model(client, _FALLBACK_MODEL, body)
+        else:
+            raise
     except ClientError as e:
         if e.code == 429:
             logger.warning(
@@ -74,7 +92,6 @@ def classify_release(body: str) -> list[ClassifiedItem]:
             raise
         raise
 
-    raw_text = response.text.strip()
     logger.debug("Gemini response: %s", raw_text)
 
     return _parse_response(raw_text)
