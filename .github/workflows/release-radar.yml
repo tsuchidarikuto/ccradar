@@ -2,7 +2,7 @@ name: Claude Code Release Radar
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # 毎日 0:00 UTC (= JST 9:00)
+    - cron: '0 21 * * *'  # 毎日 21:00 UTC (= JST 6:00)
   workflow_dispatch:       # 手動実行
   # ⚠ pull_request_target は追加禁止
 
