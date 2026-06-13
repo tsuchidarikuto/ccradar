@@ -10,3 +10,6 @@ __pycache__/
 
 # Evaluation result file should not be versioned
 scripts/eval_result*.csv
+
+# Embedding cache for Q&A bot (auto-generated at bot startup)
+data/embeddings.json
