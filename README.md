@@ -77,7 +77,10 @@ GitHub Actions が毎日 9:00 (JST) にワークフローを実行し、`data/st
 | Secret 名 | 値 |
 |---|---|
 | `GEMINI_API_KEY` | Google AI Studio で取得した API キー |
-| `SLACK_WEBHOOK_URL` | Slack Incoming Webhook の URL |
+| `SLACK_WEBHOOK_URL` | Slack Incoming Webhook の URL（日本語チャンネル） |
+| `SLACK_WEBHOOK_URL_EN` | （任意）英語チャンネル用の Slack Incoming Webhook の URL |
+
+> 💡 `SLACK_WEBHOOK_URL_EN` を登録すると、英語要約版の通知が別チャンネルにも送信されます。未登録の場合は日本語チャンネルのみに送信されます。
 
 5. （任意）**Environment variables** にモデル名を登録:
 
@@ -120,7 +123,8 @@ uv run python -m src.main
 | 変数名 | 必須 | 説明 |
 |---|---|---|
 | `GEMINI_API_KEY` | Yes | Google Gemini API のキー |
-| `SLACK_WEBHOOK_URL` | Yes | Slack Incoming Webhook の URL（`--dry-run` 時は不要） |
+| `SLACK_WEBHOOK_URL` | Yes | Slack Incoming Webhook の URL（日本語チャンネル、`--dry-run` 時は不要） |
+| `SLACK_WEBHOOK_URL_EN` | No | 英語チャンネル用の Slack Incoming Webhook の URL（未設定なら英語通知をスキップ） |
 | `GEMINI_MODEL` | No | 使用する Gemini モデル（デフォルト: `gemini-3-flash-preview`） |
 
 ## ディレクトリ構成
