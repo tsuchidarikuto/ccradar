@@ -63,7 +63,8 @@ uv run python scripts/build_truth.py --count 20
 | 変数名 | 必須 | 説明 |
 |--------|------|------|
 | GEMINI_API_KEY | Yes | Gemini API キー |
-| SLACK_WEBHOOK_URL | Yes（dry-run 時は不要） | Slack Webhook URL |
+| SLACK_WEBHOOK_URL | Yes（dry-run 時は不要） | Slack Webhook URL（日本語チャンネル） |
+| SLACK_WEBHOOK_URL_EN | No | 英語チャンネル用 Slack Webhook URL（未設定なら英語通知をスキップ） |
 | GEMINI_MODEL | No | モデル名（デフォルト: gemini-3-flash-preview） |
 | GITHUB_TOKEN | No | GitHub API トークン（レート制限緩和用、Actions では自動提供） |
 

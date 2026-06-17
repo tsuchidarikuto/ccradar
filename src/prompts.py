@@ -39,10 +39,13 @@ SYSTEM_PROMPT = """\
     {
       "category": "Feature" または "Improvement" または "Bugfix" または "Breaking" または "Change",
       "summary": "日本語での要約（1〜2文）",
+      "summary_en": "英語での要約（1〜2文）。summary と同じ内容を英語で記述する",
       "original": "入力の箇条書きから '- ' を取り除いただけの原文テキスト"
     }
   ]
 }
+
+summary は日本語チャンネル向け、summary_en は英語チャンネル向けに使用します。両方を必ず記述してください。
 
 ### original フィールドの重要な注意
 

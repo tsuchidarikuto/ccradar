@@ -35,7 +35,8 @@ class ClassifiedItem:
     """分類・要約済みのリリース項目。"""
 
     category: Category
-    summary: str
+    summary: str  # 日本語要約（日本語チャンネル向け）
+    summary_en: str = ""  # 英語要約（英語チャンネル向け）
     original: str = ""  # 元の箇条書きテキスト
 
 
@@ -117,9 +118,17 @@ def _parse_response(raw_text: str) -> list[ClassifiedItem]:
     for item in items:
         category = item.get("category", "")
         summary = item.get("summary", "")
+        summary_en = item.get("summary_en", "")
         original = item.get("original", "")
         if category in NOTIFY_CATEGORIES and summary:
-            result.append(ClassifiedItem(category=Category(category), summary=summary, original=original))
+            result.append(
+                ClassifiedItem(
+                    category=Category(category),
+                    summary=summary,
+                    summary_en=summary_en,
+                    original=original,
+                )
+            )
 
     logger.info("Classified %d relevant item(s)", len(result))
     return result
