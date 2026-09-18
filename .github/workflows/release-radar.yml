@@ -35,6 +35,7 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           SLACK_WEBHOOK_URL_EN: ${{ secrets.SLACK_WEBHOOK_URL_EN }}
+          TEAMS_WEBHOOK_URL: ${{ secrets.TEAMS_WEBHOOK_URL }}
           GEMINI_MODEL: ${{ vars.GEMINI_MODEL }}
         run: uv run python -m src.main
 

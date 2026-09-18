@@ -19,6 +19,8 @@ from src.github_client import (
 )
 from src.notifier import format_dry_run, notify, notify_no_updates
 from src.state import get_last_version, save_last_version
+from src.teams_notifier import notify as teams_notify
+from src.teams_notifier import notify_no_updates as teams_notify_no_updates
 
 logging.basicConfig(
     level=logging.INFO,
@@ -61,6 +63,7 @@ def main() -> None:
         logger.info("No new releases found since last check")
         if not args.dry_run and not args.version:
             notify_no_updates()
+            teams_notify_no_updates()
         return
 
     logger.info("Processing %d new release(s)", len(new_releases))
@@ -92,6 +95,7 @@ def main() -> None:
         else:
             # 5. 通知送信（該当項目がある場合のみ）
             notify(version, items)
+            teams_notify(version, items)
 
         latest_version = version
 

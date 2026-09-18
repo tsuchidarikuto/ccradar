@@ -79,6 +79,7 @@ GitHub Actions が毎日 9:00 (JST) にワークフローを実行し、`data/st
 | `GEMINI_API_KEY` | Google AI Studio で取得した API キー |
 | `SLACK_WEBHOOK_URL` | Slack Incoming Webhook の URL（日本語チャンネル） |
 | `SLACK_WEBHOOK_URL_EN` | （任意）英語チャンネル用の Slack Incoming Webhook の URL |
+| `TEAMS_WEBHOOK_URL` | （任意）Teams Workflows の webhook URL |
 
 > 💡 `SLACK_WEBHOOK_URL_EN` を登録すると、英語要約版の通知が別チャンネルにも送信されます。未登録の場合は日本語チャンネルのみに送信されます。
 
@@ -125,6 +126,7 @@ uv run python -m src.main
 | `GEMINI_API_KEY` | Yes | Google Gemini API のキー |
 | `SLACK_WEBHOOK_URL` | Yes | Slack Incoming Webhook の URL（日本語チャンネル、`--dry-run` 時は不要） |
 | `SLACK_WEBHOOK_URL_EN` | No | 英語チャンネル用の Slack Incoming Webhook の URL（未設定なら英語通知をスキップ） |
+| `TEAMS_WEBHOOK_URL` | No | Teams Workflows の webhook URL（未設定なら Teams 通知をスキップ） |
 | `GEMINI_MODEL` | No | 使用する Gemini モデル（デフォルト: `gemini-3-flash-preview`） |
 
 ## ディレクトリ構成
@@ -147,6 +149,7 @@ ccradar/
 │   ├── github_client.py        # GitHub API クライアント
 │   ├── classifier.py           # Gemini による分類・要約
 │   ├── notifier.py             # Slack 通知
+│   ├── teams_notifier.py       # Teams 通知（Adaptive Card）
 │   └── state.py                # 状態管理
 ├── .env.example                # 環境変数テンプレート
 ├── CLAUDE.md                   # Claude Code 用プロジェクト設定
